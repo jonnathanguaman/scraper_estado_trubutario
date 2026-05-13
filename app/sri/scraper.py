@@ -51,7 +51,7 @@ class SriScraper:
                 return ConsultaResponse(
                     status=response_status,
                     identificacion=request.identificacion,
-                    html=html if request.return_html else None,
+                    html=None,
                     data=data,
                     screenshot_path=screenshot_path,
                 )
@@ -181,6 +181,6 @@ class SriScraper:
         text = html.lower()
         if "no se encuentra en la base de datos" in text:
             return "not_found"
-        if data and (data.identificacion or data.estado_tributario or data.raw_api):
+        if data and (data.estado_tributario.resultado or data.permiso_facturacion.vigencia):
             return "ok"
         return "ok"

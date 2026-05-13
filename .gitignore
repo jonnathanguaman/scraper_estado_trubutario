@@ -6,3 +6,5 @@ venv/
 .env
 storage/
 
+server-8002.err.log
+server-8002.out.log

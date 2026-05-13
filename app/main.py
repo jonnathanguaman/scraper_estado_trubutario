@@ -45,7 +45,7 @@ async def close_browser_session() -> BrowserSessionResponse:
     return BrowserSessionResponse(status="closed", profile_dir=str(browser_manager.profile_dir()))
 
 
-@app.post("/api/v1/estado-tributario/consultar", response_model=ConsultaResponse)
+@app.post("/api/v1/estado-tributario/consultar", response_model=ConsultaResponse, response_model_exclude_none=True)
 async def consultar_estado_tributario(request: ConsultaRequest) -> ConsultaResponse:
     return await scraper.consultar(request)
 

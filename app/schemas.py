@@ -1,5 +1,5 @@
 from enum import StrEnum
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -21,28 +21,29 @@ class ConsultaRequest(BaseModel):
     def validar_identificacion(cls, value: str) -> str:
         cleaned = value.strip()
         if not cleaned:
-            raise ValueError("La identificación es obligatoria.")
+            raise ValueError("La identificacion es obligatoria.")
         return cleaned
 
     @model_validator(mode="after")
     def validar_formato_basico(self) -> "ConsultaRequest":
         if self.tipo == TipoIdentificacion.ruc_cedula and not self.identificacion.isdigit():
-            raise ValueError("RUC/cédula solo acepta números.")
+            raise ValueError("RUC/cedula solo acepta numeros.")
         if self.tipo == TipoIdentificacion.ruc_cedula and len(self.identificacion) not in (10, 13):
-            raise ValueError("RUC/cédula debe tener 10 o 13 dígitos.")
+            raise ValueError("RUC/cedula debe tener 10 o 13 digitos.")
         return self
 
 
+class PermisoFacturacionData(BaseModel):
+    vigencia: str | None = None
+
+
+class EstadoTributarioResultadoData(BaseModel):
+    resultado: str | None = None
+
+
 class EstadoTributarioData(BaseModel):
-    identificacion: str | None = None
-    nombre_razon_social: str | None = None
-    estado_tributario: str | None = None
-    permiso_facturacion: str | None = None
-    obligaciones_presentacion: list[dict[str, Any]] = Field(default_factory=list)
-    obligaciones_pago: list[dict[str, Any]] = Field(default_factory=list)
-    deudas_firmes: Any | None = None
-    mensajes: list[str] = Field(default_factory=list)
-    raw_api: dict[str, Any] = Field(default_factory=dict)
+    permiso_facturacion: PermisoFacturacionData = Field(default_factory=PermisoFacturacionData)
+    estado_tributario: EstadoTributarioResultadoData = Field(default_factory=EstadoTributarioResultadoData)
 
 
 class ConsultaResponse(BaseModel):
