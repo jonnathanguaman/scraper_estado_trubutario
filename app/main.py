@@ -1,13 +1,18 @@
 from contextlib import asynccontextmanager
+import logging
+import time
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 
 from app.config import get_settings
+from app.logging_config import configure_logging
 from app.schemas import BrowserSessionResponse, ConsultaRequest, ConsultaResponse, HealthResponse
 from app.sri.browser import SriBrowserManager
 from app.sri.scraper import SriScraper
 
 settings = get_settings()
+configure_logging(settings)
+logger = logging.getLogger(__name__)
 browser_manager = SriBrowserManager(settings)
 scraper = SriScraper(browser_manager, settings)
 
@@ -19,6 +24,30 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title=settings.app_name, version="0.1.0", lifespan=lifespan)
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    started_at = time.monotonic()
+    logger.info("http_request_start method=%s path=%s", request.method, request.url.path)
+    try:
+        response = await call_next(request)
+    except Exception:
+        logger.exception(
+            "http_request_error method=%s path=%s elapsed_ms=%s",
+            request.method,
+            request.url.path,
+            round((time.monotonic() - started_at) * 1000),
+        )
+        raise
+    logger.info(
+        "http_request_end method=%s path=%s status=%s elapsed_ms=%s",
+        request.method,
+        request.url.path,
+        response.status_code,
+        round((time.monotonic() - started_at) * 1000),
+    )
+    return response
 
 
 @app.get("/health", response_model=HealthResponse)

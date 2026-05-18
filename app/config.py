@@ -12,11 +12,12 @@ class Settings(BaseSettings):
         default="https://srienlinea.sri.gob.ec/sri-en-linea/SriDeclaracionesWeb/EstadoTributario/Consultas/consultaEstadoTributario",
         alias="SRI_URL",
     )
-    sri_headless: bool = Field(default=False, alias="SRI_HEADLESS")
+    sri_headless: bool = Field(default=True, alias="SRI_HEADLESS")
     sri_timeout_ms: int = Field(default=60_000, alias="SRI_TIMEOUT_MS")
     sri_profile_dir: Path = Field(default=Path("storage/browser-profile"), alias="SRI_PROFILE_DIR")
     sri_rate_limit_seconds: float = Field(default=5.0, alias="SRI_RATE_LIMIT_SECONDS")
     sri_screenshot_dir: Path = Field(default=Path("storage/screenshots"), alias="SRI_SCREENSHOT_DIR")
+    log_level: str = Field(default="INFO", alias="LOG_LEVEL")
 
     app_name: str = "Extractor Estado Tributario SRI"
 
