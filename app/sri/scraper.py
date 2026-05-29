@@ -35,6 +35,22 @@ class SriScraper:
         self._last_request_at = 0.0
 
     async def consultar(self, request: ConsultaRequest) -> ConsultaResponse:
+        result = await self._consultar_once(request)
+        if result.status == "captcha_required":
+            logger.warning("captcha_umbral_bajo_reseteando_perfil")
+            await self._reset_profile()
+            logger.info("captcha_perfil_reseteado_reintentando")
+            result = await self._consultar_once(request)
+        return result
+
+    async def _reset_profile(self) -> None:
+        import shutil
+        profile_dir = self.browser.profile_dir()
+        if profile_dir.exists():
+            shutil.rmtree(profile_dir, ignore_errors=True)
+            logger.info("browser_profile_deleted path=%s", profile_dir)
+
+    async def _consultar_once(self, request: ConsultaRequest) -> ConsultaResponse:
         started_at = time.monotonic()
         masked_id = mask_identification(request.identificacion)
         logger.info(
