@@ -8,10 +8,12 @@ services:
     ports:
       - "${APP_PORT:-8000}:8000"
     environment:
-      SRI_HEADLESS: "true"
+      SRI_HEADLESS: "${SRI_HEADLESS:-false}"
       SRI_TIMEOUT_MS: "${SRI_TIMEOUT_MS:-60000}"
       SRI_PROFILE_DIR: "/app/storage/browser-profile"
       SRI_RATE_LIMIT_SECONDS: "${SRI_RATE_LIMIT_SECONDS:-5}"
+      CAPSOLVER_API_KEY: "${CAPSOLVER_API_KEY:-}"
+      TWOCAPTCHA_API_KEY: "${TWOCAPTCHA_API_KEY:-}"
       SRI_SCREENSHOT_DIR: "/app/storage/screenshots"
       LOG_LEVEL: "${LOG_LEVEL:-INFO}"
     volumes:

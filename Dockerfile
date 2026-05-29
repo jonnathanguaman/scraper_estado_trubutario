@@ -14,7 +14,7 @@ RUN pip install --no-cache-dir -r requirements.txt && \
 
 COPY app ./app
 
-RUN mkdir -p /app/storage/browser-profile /app/storage/screenshots
+RUN mkdir -p /app/storage/browser-profile /app/storage/screenshots /app/storage/capturas
 
 EXPOSE 8000
 

@@ -12,7 +12,7 @@ class TipoIdentificacion(StrEnum):
 class ConsultaRequest(BaseModel):
     identificacion: str = Field(min_length=1, max_length=20)
     tipo: TipoIdentificacion = TipoIdentificacion.ruc_cedula
-    return_html: bool = True
+    return_html: bool = False
     return_data: bool = True
     screenshot: bool = False
 
